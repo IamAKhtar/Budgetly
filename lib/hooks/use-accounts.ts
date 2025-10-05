@@ -7,9 +7,10 @@ export function useAccounts() {
   const queryClient = useQueryClient();
   const { queueSync } = useSync();
 
+  // Use a client-side filter because Dexie indexes can't use boolean keys safely for equals()
   const accountsQuery = useQuery({
     queryKey: ['accounts'],
-    queryFn: () => db.accounts.where('archived').equals(false).toArray(),
+    queryFn: () => db.accounts.filter(a => !a.archived).toArray(),
   });
 
   const createAccount = useMutation({
