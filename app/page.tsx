@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { QuickAddForm } from '@/components/forms/quick-add-form';
+import { OpeningBalanceButton } from '@/components/forms/opening-balance-button';
 import { AccountsOverview } from '@/components/features/accounts-overview';
 import { BudgetOverview } from '@/components/features/budget-overview';
 import { RecentTransactions } from '@/components/features/recent-transactions';
@@ -16,8 +17,11 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Quick Add</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <QuickAddForm />
+            <div className="pt-2 border-t">
+              <OpeningBalanceButton />
+            </div>
           </CardContent>
         </Card>
 
