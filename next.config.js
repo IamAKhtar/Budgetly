@@ -12,7 +12,10 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Removed experimental.appDir (no longer needed / recognized)
+  // Use a dedicated tsconfig for production builds to avoid test tooling during type-check.
+  typescript: {
+    tsconfigPath: "./tsconfig.build.json",
+  },
 };
 
 module.exports = withPWA(nextConfig);
