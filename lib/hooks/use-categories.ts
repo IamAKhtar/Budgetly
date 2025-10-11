@@ -29,11 +29,20 @@ export function useCategories() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });
 
-  const deleteCategory = useMutation({
+  const updateCategory = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<LocalCategory> }) => {
+      const patch = { ...data, updatedAt: new Date(), synced: false };
+      await db.categories.update(id, patch);
+      await queueSync('UPDATE', 'categories', id, patch);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  });
+
+  // Soft delete == archive, do not remove referenced rows
+  const archiveCategory = useMutation({
     mutationFn: async (id: string) => {
-      // Soft delete by suffixing name; avoid breaking references
-      await db.categories.update(id, { name: `(archived) ` + id, synced: false, updatedAt: new Date() });
-      await queueSync('UPDATE', 'categories', id, { name: `(archived) ` + id });
+      await db.categories.update(id, { name: '(archived) ' + id, synced: false, updatedAt: new Date() });
+      await queueSync('UPDATE', 'categories', id, { name: '(archived) ' + id });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });
@@ -42,6 +51,7 @@ export function useCategories() {
     categories: categoriesQuery.data || [],
     isLoading: categoriesQuery.isLoading,
     createCategory,
-    deleteCategory,
+    updateCategory,
+    archiveCategory,
   };
 }
